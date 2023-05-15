@@ -1,3 +1,3 @@
-# age-bot
+# slack-go-bots
 
-Simple Slack-bot to calculate age
+Simple Slack-bots: - to calculate age
