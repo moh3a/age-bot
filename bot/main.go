@@ -2,7 +2,7 @@
 SIMPLE SLACK BOT THAT RESPONDS TO 2 CURRENT QUERIES: GREETINGS AND AGE
 */
 
-package slacker
+package bot
 
 import (
 	"context"
@@ -14,16 +14,16 @@ import (
 	"github.com/shomali11/slacker"
 )
 
-func RunBot() {
+func Run() {
 	bot := slacker.NewClient(os.Getenv("SLACK_BOT_TOKEN"), os.Getenv("SLACK_APP_TOKEN"))
 	go printCommandEvents(bot.CommandEvents())
 
 	botCommand(
 		bot,
 		Command{
-			formatted_prompt: "my year of birth is <year>",
-			description:      "yob calculator",
-			examples:         []string{"my year of birth is 2020"},
+			formatted_prompt: "My year of birth is <year>",
+			description:      "Year Of Birth Calculator",
+			examples:         []string{"My year of birth is 2020"},
 			handler: func(bc slacker.BotContext, r slacker.Request, w slacker.ResponseWriter) {
 				year := r.Param("year")
 				yob, err := strconv.Atoi(year)
@@ -31,7 +31,7 @@ func RunBot() {
 					fmt.Println("Error!")
 				}
 				age := 2023 - yob
-				reply := fmt.Sprintf("age is %d", age)
+				reply := fmt.Sprintf("Your age is %d!", age)
 				w.Reply(reply)
 			},
 		},
@@ -40,12 +40,12 @@ func RunBot() {
 	botCommand(
 		bot,
 		Command{
-			formatted_prompt: "hello, my name is <name>",
-			description:      "greetings from out bot!",
-			examples:         []string{"hello, my name is mohamed"},
+			formatted_prompt: "My name is <name>",
+			description:      "Greetings From Our Bot!",
+			examples:         []string{"My name is Alex"},
 			handler: func(bc slacker.BotContext, r slacker.Request, w slacker.ResponseWriter) {
 				name := r.Param("name")
-				reply := fmt.Sprintf("hello %s. My name is bot. reglini.bot.", name)
+				reply := fmt.Sprintf("Hello %s. My name is bot. reglini.bot.", name)
 				w.Reply(reply)
 			},
 		},

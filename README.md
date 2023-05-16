@@ -1,3 +1,4 @@
 # slack-go-bots
 
-Simple Slack-bots: - to calculate age
+- to calculate age
+- image upload to slack
