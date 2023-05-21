@@ -2,21 +2,18 @@
 SIMPLE SLACK BOT THAT RESPONDS TO 2 CURRENT QUERIES: GREETINGS AND AGE
 */
 
-package bot
+package botcmd
 
 import (
-	"context"
 	"fmt"
-	"log"
-	"os"
 	"strconv"
 
+	"github.com/moh3a/slack-go-bots/shared"
 	"github.com/shomali11/slacker"
 )
 
 func Run() {
-	bot := slacker.NewClient(os.Getenv("SLACK_BOT_TOKEN"), os.Getenv("SLACK_APP_TOKEN"))
-	go printCommandEvents(bot.CommandEvents())
+	bot := shared.NewSlackerClient()
 
 	botCommand(
 		bot,
@@ -51,13 +48,18 @@ func Run() {
 		},
 	)
 
-	botctx, botcancel := context.WithCancel(context.Background())
-	defer botcancel()
-
-	boterr := bot.Listen(botctx)
-	if boterr != nil {
-		log.Fatal(boterr)
-	}
+	botCommand(
+		bot,
+		Command{
+			formatted_prompt: "? <message>",
+			description:      "Send any question to wolfram",
+			examples:         []string{"? Who is the president of the world?"},
+			handler: func(bc slacker.BotContext, r slacker.Request, w slacker.ResponseWriter) {
+				query := r.Param("message")
+				fmt.Printf(query) // todo
+			},
+		},
+	)
 }
 
 type Command struct {
@@ -73,15 +75,4 @@ func botCommand(bot *slacker.Slacker, command Command) {
 		Examples:    command.examples,
 		Handler:     command.handler,
 	})
-}
-
-func printCommandEvents(analyticsChannel <-chan *slacker.CommandEvent) {
-	for event := range analyticsChannel {
-		fmt.Println("Command events")
-		fmt.Println(event.Timestamp)
-		fmt.Println(event.Command)
-		fmt.Println(event.Parameters)
-		fmt.Println(event.Event)
-		fmt.Println()
-	}
 }
